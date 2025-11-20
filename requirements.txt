@@ -1,0 +1,18 @@
+--extra-index-url https://download.pytorch.org/whl/cu126
+torch
+transformers
+datasets
+evaluate[rouge]
+accelerate
+peft
+hf_transfer
+
+bitsandbytes
+
+wandb
+python-dotenv
+PyYAML
+
+tqdm
+
+rouge_score
