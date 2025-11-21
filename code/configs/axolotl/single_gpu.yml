@@ -12,7 +12,7 @@ lora_target_modules:
   - o_proj
 
 datasets:
-  - path: samsum
+  - path: knkarthick/samsum
     type: huggingface
     split: train
     field_dialogue: dialogue
