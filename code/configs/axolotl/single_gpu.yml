@@ -1,26 +1,25 @@
 base_model: meta-llama/Llama-3.2-1B-Instruct
 load_in_4bit: true
-strict: false
-
-datasets:
-  - path: samsum
-    type: alpaca
-
-val_set_size: 0.1
-
 adapter: lora
-lora_r: 16
-lora_alpha: 32
+lora_r: 8
+lora_alpha: 16
 lora_dropout: 0.05
+
 lora_target_modules:
   - q_proj
   - k_proj
   - v_proj
   - o_proj
 
-sequence_len: 2048
-sample_packing: true
+datasets:
+  - path: samsum
+    type: huggingface
+    split: train
+    field_dialogue: dialogue
+    hf_use_auth_token: true
 
+sequence_len: 512
+sample_packing: true
 output_dir: ./outputs/qlora-run
 
 num_epochs: 2
@@ -31,3 +30,16 @@ optimizer: adamw_8bit
 
 bf16: auto
 gradient_checkpointing: true
+
+logging:
+  wandb: true
+  wandb_name: Axolotl_single_gpu_qlora_run
+  wandb_project: llama3_samsum
+  wandb_entity: hf-internal-testing
+  wandb_watch: all
+  wandb_log_model: checkpoint
+
+plugins:
+  - axolotl.integrations.cut_cross_entropy.CutCrossEntropyPlugin
+
+strict: false
