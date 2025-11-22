@@ -1,0 +1,66 @@
+{
+  "builder_name": "csv",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "samsum",
+  "dataset_size": 10384156,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/knkarthick/samsum@6b929ff10edec703164e3ddb2e94aae058c9ab5f/train.csv": {
+      "num_bytes": 9255369,
+      "checksum": null
+    },
+    "hf://datasets/knkarthick/samsum@6b929ff10edec703164e3ddb2e94aae058c9ab5f/validation.csv": {
+      "num_bytes": 504263,
+      "checksum": null
+    },
+    "hf://datasets/knkarthick/samsum@6b929ff10edec703164e3ddb2e94aae058c9ab5f/test.csv": {
+      "num_bytes": 521859,
+      "checksum": null
+    }
+  },
+  "download_size": 10281491,
+  "features": {
+    "id": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "dialogue": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "summary": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 20665647,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 9347792,
+      "num_examples": 14731,
+      "dataset_name": "samsum"
+    },
+    "validation": {
+      "name": "validation",
+      "num_bytes": 509370,
+      "num_examples": 818,
+      "dataset_name": "samsum"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 526994,
+      "num_examples": 819,
+      "dataset_name": "samsum"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

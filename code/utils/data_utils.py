@@ -31,6 +31,20 @@ def get_local_dataset_path(dataset_name: str, cache_dir: str = None) -> str:
 
 
 def select_subset(dataset, n_samples, seed=42):
+    """Select a subset of the dataset.
+    If n_samples is "all" or None, return the entire dataset.
+    Otherwise, sample n_samples examples.
+    """
+    if n_samples == "all" or n_samples is None:
+        return dataset
+
+    if n_samples > len(dataset):
+        print(
+            f"Requested {n_samples} samples but only {len(dataset)} available. Using all samples."
+        )
+        return dataset
+
+    return dataset.shuffle(seed=seed).select(range(n_samples))
     """
     Select a subset of the dataset.
     If n_samples is "all" or None, return the entire dataset.
@@ -48,6 +62,15 @@ def select_subset(dataset, n_samples, seed=42):
     return dataset.shuffle(seed=seed).select(range(n_samples))
 
 
+
+def get_field_names(cfg_dataset, default_input='dialogue', default_output='summary'):
+    """Return input and output column names based on field_map.
+    field_map maps generic names ('input', 'output') to dataset-specific column names.
+    """
+    field_map = cfg_dataset.get('field_map', {})
+    input_col = field_map.get('input', default_input)
+    output_col = field_map.get('output', default_output)
+    return input_col, output_col
 def load_and_prepare_dataset(cfg):
     """
     Load dataset splits according to configuration.
@@ -72,6 +95,9 @@ def load_and_prepare_dataset(cfg):
         n_val = cfg.get("val_samples", "all")
         n_test = cfg.get("test_samples", "all")
         seed = cfg.get("seed", 42)
+        # Determine column names based on field_map
+        input_col, output_col = get_field_names(cfg_dataset)
+        dataset_type = cfg_dataset.get('type')
     else:
         raise KeyError(
             "Dataset configuration not found. Expected 'dataset' or 'datasets' key."
@@ -91,6 +117,13 @@ def load_and_prepare_dataset(cfg):
         dataset = load_dataset(dataset_name)
         dataset.save_to_disk(local_path)
         print(f"Full dataset saved locally to: {local_path}")
+        # If the dataset is of type 'completion', create a unified 'text' field
+        if dataset_type == 'completion':
+            task_instruction = cfg.get('task_instruction', '')
+            def make_text(example):
+                return f"{task_instruction}\n\n## Dialogue:\n{example[input_col]}\n\n## Summary:\n{example[output_col]}"
+            dataset = dataset.map(lambda ex: {'text': make_text(ex)}, remove_columns=[])
+
 
     # -----------------------------------------------------------------------
     # Handle variations in split keys and select subsets dynamically
@@ -122,12 +155,15 @@ def build_messages_for_sample(sample, task_instruction, include_assistant=False)
     Build a chat-style message list for a given sample, compatible with
     models that use chat templates (like Llama 3).
     """
-    messages = [
-        {
+    # If the dataset provides a pre‑built 'text' field (completion style), use it directly.
+    if "text" in sample:
+        messages = [{"role": "user", "content": sample["text"]}]
+    else:
+        messages = [{
             "role": "user",
             "content": build_user_prompt(sample["dialogue"], task_instruction),
-        }
-    ]
+        }]
     if include_assistant:
+        # For chat style datasets, include the reference summary.
         messages.append({"role": "assistant", "content": sample["summary"]})
     return messages
