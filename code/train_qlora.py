@@ -220,7 +220,7 @@ def main(cfg_path: str = None):
     # Initialize W&B
     wandb.init(
         project=cfg.get("wandb_project", "llama3_samsum"),
-        name=cfg.get("wandb_run_name", "lora-finetuning-default-hps"),
+        name=cfg.get("wandb_run_name", "Axolotl_run_lora_r_8_lora_alpha_16"),
         config={
             "model": cfg["base_model"],
             "learning_rate": cfg.get("learning_rate", 2e-4),
