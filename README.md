@@ -4,6 +4,9 @@
 - CUDA-compatible GPUs
 - Python 3.9+
 
+## Finetune Evaluation Weight & Bias
+![Main Report Result](assets/image.png)
+
 ## Installation
 
 1. **Install dependencies:**
